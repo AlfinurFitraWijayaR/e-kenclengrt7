@@ -15,10 +15,9 @@ export async function signIn(formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: "email atau password salah" };
   }
 
-  // Get user role for redirect
   const { data: profile } = await supabase
     .from("users")
     .select("role")
@@ -27,33 +26,7 @@ export async function signIn(formData: FormData) {
 
   const userRole = profile?.role || "officer";
 
-  // Redirect based on role
   redirect(userRole === "admin" ? "/admin" : "/");
-}
-
-export async function signUp(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const fullName = formData.get("full_name") as string;
-
-  const supabase = await createClient();
-
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
-        role: "officer", // Default role is officer
-      },
-    },
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  redirect("/login?message=Periksa email Anda untuk verifikasi");
 }
 
 export async function signOut() {

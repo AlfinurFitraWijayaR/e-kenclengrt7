@@ -42,7 +42,6 @@ export function HouseholdPaymentButton({
         household={household}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        periods={periods}
       />
     </>
   );
