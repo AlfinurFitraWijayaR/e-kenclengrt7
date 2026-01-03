@@ -110,7 +110,6 @@ export function HouseholdListHistory({ households }: HouseholdListProps) {
         household={selectedHousehold}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        periods={periods}
       />
     </>
   );
