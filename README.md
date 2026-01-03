@@ -1,36 +1,217 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# E-Kencleng RT 7
 
-## Getting Started
+Sistem Pengelolaan Iuran Warga RT 7 - Aplikasi web untuk manajemen kas komunitas berbasis tagihan harian.
 
-First, run the development server:
+## 📋 Gambaran Umum
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+E-Kencleng RT 7 adalah aplikasi pengelolaan iuran warga yang dirancang untuk:
+
+- Pencatatan iuran harian rumah tangga (Rp 500/hari)
+- Manajemen pembayaran secara tunai
+- Perhitungan saldo otomatis (hutang/deposit)
+- Pelaporan per periode pengumpulan
+- Ekspor laporan ke PDF
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: TailwindCSS 4
+- **UI Components**: shadcn/ui (New York style)
+- **Database**: Supabase (PostgreSQL)
+- **Auth**: Supabase Authentication
+- **Architecture**: Server Components, Server Actions
+
+## 📁 Struktur Folder
+
+```
+src/
+├── app/
+│   ├── (protected)/          # Route grup dengan auth
+│   ├── api/
+│   │   └── export/pdf/       # API ekspor PDF
+│   ├── dashboard/            # Halaman dashboard
+│   ├── households/           # CRUD rumah tangga
+│   │   ├── [id]/             # Detail & edit
+│   │   └── new/              # Tambah baru
+│   ├── periods/              # CRUD periode
+│   │   ├── [id]/edit/        # Edit periode
+│   │   └── new/              # Periode baru
+│   ├── history/              # Riwayat pengumpulan
+│   ├── export/               # Ekspor PDF
+│   └── login/                # Halaman login
+├── components/
+│   ├── ui/                   # shadcn/ui components
+│   ├── layout/               # Layout components
+│   ├── balance-display.tsx   # Tampilan saldo
+│   └── dashboard-components.tsx
+└── lib/
+    ├── actions/              # Server Actions
+    │   ├── auth.ts           # Auth actions
+    │   ├── dashboard.ts      # Dashboard data
+    │   ├── households.ts     # CRUD rumah tangga
+    │   ├── periods.ts        # CRUD periode
+    │   └── transactions.ts   # Transaksi pembayaran
+    ├── supabase/             # Supabase clients
+    │   ├── client.ts         # Browser client
+    │   ├── server.ts         # Server client
+    │   └── middleware.ts     # Auth middleware
+    ├── types/
+    │   └── database.ts       # TypeScript types
+    └── format.ts             # Utility functions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🗄️ Database Schema
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Tables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+#### `households`
 
-## Learn More
+| Column                  | Type      | Description                |
+| ----------------------- | --------- | -------------------------- |
+| id                      | uuid      | Primary key                |
+| name                    | varchar   | Nama kepala keluarga/rumah |
+| contribution_start_date | date      | Tanggal mulai iuran        |
+| status                  | varchar   | 'active' / 'inactive'      |
+| created_at              | timestamp | Waktu dibuat               |
 
-To learn more about Next.js, take a look at the following resources:
+#### `collection_periods`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Column     | Type      | Description           |
+| ---------- | --------- | --------------------- |
+| id         | uuid      | Primary key           |
+| month      | int       | Bulan (1-12)          |
+| year       | int       | Tahun                 |
+| start_date | date      | Tanggal mulai periode |
+| end_date   | date      | Tanggal akhir periode |
+| notes      | text      | Catatan               |
+| created_at | timestamp | Waktu dibuat          |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### `contribution_transactions`
 
-## Deploy on Vercel
+| Column           | Type      | Description              |
+| ---------------- | --------- | ------------------------ |
+| id               | uuid      | Primary key              |
+| household_id     | uuid      | FK ke households         |
+| period_id        | uuid      | FK ke collection_periods |
+| transaction_date | date      | Tanggal transaksi        |
+| type             | varchar   | 'DEBIT' / 'CREDIT'       |
+| amount           | int       | Jumlah (dalam IDR)       |
+| description      | text      | Keterangan               |
+| created_at       | timestamp | Waktu dibuat             |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Tipe Transaksi
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **DEBIT**: Kewajiban iuran harian (500 IDR/hari)
+- **CREDIT**: Pembayaran tunai dari warga
+
+## 💰 Perhitungan Saldo
+
+```
+saldo = SUM(CREDIT.amount) − (total_hari × 500)
+```
+
+Dimana:
+
+- `total_hari` = jumlah hari dari `contribution_start_date` sampai hari ini
+- Saldo < 0 → **Hutang**
+- Saldo > 0 → **Deposit**
+- Saldo = 0 → **Lunas**
+
+⚠️ **Saldo TIDAK disimpan di database**, melainkan dihitung secara dinamis dari riwayat transaksi.
+
+## 🔐 Authentication & Authorization
+
+### Roles
+
+- **Admin**: Full access (CRUD semua data)
+- **Officer**: Lihat data + catat pembayaran
+
+### Protected Routes
+
+- `/dashboard`
+- `/households`
+- `/periods`
+- `/history`
+- `/export`
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Supabase account
+
+### Environment Variables
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Run database migrations
+# Copy supabase/schema.sql to Supabase SQL Editor and run
+
+# Start development server
+npm run dev
+```
+
+### Database Setup
+
+1. Buat project baru di Supabase
+2. Salin isi `supabase/schema.sql` ke SQL Editor
+3. Jalankan query untuk membuat tables dan functions
+4. Enable Row Level Security sesuai kebutuhan
+
+## 📊 Fitur Utama
+
+### Dashboard
+
+- Total rumah tangga aktif
+- Total kas terkumpul
+- Jumlah rumah tangga berhutang
+- Jumlah rumah tangga dengan deposit
+- Pembayaran terbaru
+- Daftar rumah tangga dengan hutang terbesar
+
+### Manajemen Rumah Tangga
+
+- Tambah, edit, hapus rumah tangga
+- Lihat saldo dan riwayat transaksi
+- Catat pembayaran baru
+
+### Periode Pengumpulan
+
+- Buat periode bulanan
+- Lihat status pembayaran per periode
+- Filter berdasarkan bulan/tahun
+
+### Riwayat & Laporan
+
+- Laporan status pembayaran per periode
+- Ekspor ke PDF untuk pencetakan
+
+## 🎨 UI/UX
+
+- Mobile-first responsive design
+- Glassmorphism login page
+- Gradient accent colors (emerald/teal)
+- Status badges dengan warna:
+  - 🔴 Merah = Hutang
+  - 🟢 Hijau = Deposit/Lunas
+- Format saldo eksplisit:
+  - "−3.000 (Hutang)"
+  - "+2.000 (Deposit)"
+
+## 📄 License
+
+MIT License - Bebas digunakan untuk keperluan komunitas.
+
+---
+
+**E-Kencleng RT 7** © 2025
