@@ -22,19 +22,19 @@ export function formatBalance(balance: number): {
     return {
       formatted: formatCurrency(Math.abs(balance)),
       status: "debt",
-      label: `−${formatCurrency(Math.abs(balance))} (Hutang)`,
+      label: `−${formatCurrency(Math.abs(balance))}`,
     };
   } else if (balance > 0) {
     return {
       formatted: formatCurrency(balance),
       status: "deposit",
-      label: `+${formatCurrency(balance)} (Nyimpen)`,
+      label: `+${formatCurrency(balance)}`,
     };
   } else {
     return {
       formatted: formatCurrency(0),
       status: "zero",
-      label: "Rp 0 (Lunas)",
+      label: "Rp 0",
     };
   }
 }

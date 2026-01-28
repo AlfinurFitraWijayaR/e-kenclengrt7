@@ -105,7 +105,6 @@ export function HouseholdListHistory({ households }: HouseholdListProps) {
         )}
       </div>
 
-      {/* Quick Payment Modal */}
       <QuickHistoryModal
         household={selectedHousehold}
         isOpen={isModalOpen}

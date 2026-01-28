@@ -24,7 +24,6 @@ interface RecentPayment {
  */
 export async function getDashboardSummary(): Promise<DashboardSummary> {
   const supabase = await createClient();
-
   const { data, error } = await supabase.rpc("get_dashboard_summary");
 
   if (error) {
@@ -59,7 +58,7 @@ export async function getDashboardSummary(): Promise<DashboardSummary> {
  * Get recent payments for dashboard
  */
 export async function getRecentPayments(
-  limit: number = 5
+  limit: number = 5,
 ): Promise<RecentPayment[]> {
   const supabase = await createClient();
 
@@ -72,7 +71,7 @@ export async function getRecentPayments(
         id,
         name
       )
-    `
+    `,
     )
     .eq("type", "CREDIT")
     .order("created_at", { ascending: false })
@@ -90,7 +89,7 @@ export async function getRecentPayments(
  * Get households with highest debt for dashboard
  */
 export async function getHouseholdsWithMostDebt(
-  limit: number = 5
+  limit: number = 5,
 ): Promise<HouseholdWithBalance[]> {
   const supabase = await createClient();
 

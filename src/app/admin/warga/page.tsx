@@ -6,7 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -27,6 +29,7 @@ export const metadata: Metadata = {
 
 export default async function AdminWargaPage() {
   const households = await getHouseholdsWithBalance();
+  console.log(households);
 
   return (
     <DashboardLayout>
@@ -48,56 +51,41 @@ export default async function AdminWargaPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card className="border-slate-200/50 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-slate-50">
-                  <TableHead className="font-semibold">Nama</TableHead>
-                  <TableHead className="font-semibold">Mulai Iuran</TableHead>
-                  <TableHead className="font-semibold">Status</TableHead>
-                  <TableHead className="font-semibold">Saldo</TableHead>
-                  <TableHead className="font-semibold text-right">
-                    Aksi
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {households.map((household) => (
-                  <TableRow
-                    key={household.id}
-                    className="hover:bg-slate-50/50 transition-colors"
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-slate-50">
+              <TableHead className="font-semibold">Nama</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="font-semibold text-right">
+                Tagihan
+              </TableHead>
+              {/* <TableHead className="font-semibold text-right">Aksi</TableHead> */}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {households.map((household) => (
+              <TableRow key={household.id}>
+                <TableCell>
+                  <Link
+                    href={`/admin/warga/${household.id}`}
+                    className="font-medium text-slate-900 hover:text-emerald-600 transition-colors"
                   >
-                    <TableCell>
-                      <Link
-                        href={`/admin/warga/${household.id}`}
-                        className="font-medium text-slate-900 hover:text-emerald-600 transition-colors"
-                      >
-                        {household.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="text-slate-600">
-                      {formatDate(household.contribution_start_date)}
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge status={household.status} />
-                    </TableCell>
-                    <TableCell>
-                      <BalanceDisplay
-                        balance={household.balance}
-                        size="sm"
-                        showBadge={true}
-                      />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <HouseholdActions householdId={household.id} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </Card>
+                    {household.name}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <StatusBadge status={household.status} />
+                </TableCell>
+                <TableCell className="text-right">
+                  <BalanceDisplay balance={household.balance} size="sm" />
+                </TableCell>
+                {/* <TableCell className="text-right">
+                  <HouseholdActions householdId={household.id} />
+                </TableCell> */}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </DashboardLayout>
   );

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus, Eye } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export function AddPeriodButton() {
   return (
@@ -23,21 +23,5 @@ export function EmptyPeriodAction() {
         Buat Periode
       </Button>
     </Link>
-  );
-}
-
-interface PeriodActionsProps {
-  periodId: string;
-}
-
-export function PeriodActions({ periodId }: PeriodActionsProps) {
-  return (
-    <>
-      <Link href={`/admin/history?period=${periodId}`}>
-        <Button variant="ghost" size="sm">
-          <Eye className="w-4 h-4" />
-        </Button>
-      </Link>
-    </>
   );
 }

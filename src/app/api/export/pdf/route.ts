@@ -40,10 +40,6 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate summary
-    const totalDue = report.reduce((sum, r) => sum + r.total_due, 0);
-    const totalPaid = report.reduce((sum, r) => sum + r.total_paid, 0);
-    const paidCount = report.filter((r) => r.status === "PAID").length;
-    const unpaidCount = report.filter((r) => r.status === "UNPAID").length;
     const periodDays = daysBetween(period.start_date, period.end_date);
 
     // Generate HTML for viewing/printing
@@ -109,55 +105,9 @@ export async function GET(request: NextRequest) {
       margin-bottom: 5px;
       letter-spacing: -0.5px;
     }
-    .header h2 {
-      color: #475569;
-      font-size: 20px;
-      font-weight: 500;
-    }
     .header p {
       color: #94a3b8;
       font-size: 14px;
-      margin-top: 10px;
-    }
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 30px;
-    }
-    .summary-item {
-      background: #f8fafc;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      border: 1px solid #e2e8f0;
-    }
-    .summary-item.success {
-      background: #ecfdf5;
-      border-color: #a7f3d0;
-    }
-    .summary-item.danger {
-      background: #fef2f2;
-      border-color: #fecaca;
-    }
-    .summary-item label {
-      font-size: 12px;
-      color: #64748b;
-      display: block;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .summary-item .value {
-      font-size: 20px;
-      font-weight: 700;
-      color: #1e293b;
-    }
-    .summary-item.success .value {
-      color: #059669;
-    }
-    .summary-item.danger .value {
-      color: #dc2626;
     }
     table {
       width: 100%;
@@ -165,7 +115,7 @@ export async function GET(request: NextRequest) {
       margin-top: 20px;
     }
     th, td {
-      padding: 14px 12px;
+      padding: 4px 12px;
       text-align: left;
       border-bottom: 1px solid #e2e8f0;
     }
@@ -218,7 +168,7 @@ export async function GET(request: NextRequest) {
       margin-top: 40px;
       padding-top: 20px;
       border-top: 1px solid #e2e8f0;
-      text-align: center;
+      text-align: end;
       color: #94a3b8;
       font-size: 12px;
     }
@@ -248,50 +198,28 @@ export async function GET(request: NextRequest) {
 <body>
   <div class="container">
     <div class="header">
-      <h1>E-KENCLENG RT 7</h1>
-      <h2>Laporan Iuran ${getMonthName(period.month)} ${period.year}</h2>
+      <h1>LAPORAN KENCLENG RT 7</h1>
       <p>Periode: ${formatDate(period.start_date)} - ${formatDate(
       period.end_date
     )} (${periodDays} hari)</p>
     </div>
 
-    <div class="summary">
-      <div class="summary-item">
-        <label>Total Kewajiban</label>
-        <div class="value">${formatCurrency(totalDue)}</div>
-      </div>
-      <div class="summary-item success">
-        <label>Total Terkumpul</label>
-        <div class="value">${formatCurrency(totalPaid)}</div>
-      </div>
-      <div class="summary-item success">
-        <label>Lunas</label>
-        <div class="value">${paidCount} Rumah</div>
-      </div>
-      <div class="summary-item danger">
-        <label>Belum Lunas</label>
-        <div class="value">${unpaidCount} Rumah</div>
-      </div>
-    </div>
-
     <table>
       <thead>
         <tr>
-          <th>No</th>
           <th>Nama</th>
-          <th class="text-right">Kewajiban</th>
-          <th class="text-right">Dibayar</th>
-          <th class="text-right">Selisih</th>
+          <th class="text-right">Total Tagihan</th>
+          <th class="text-right">Bayar</th>
+          <th class="text-right">Hutang</th>
           <th class="text-center">Status</th>
         </tr>
       </thead>
       <tbody>
         ${report
-          .map((row, index) => {
+          .map((row) => {
             const difference = row.total_paid - row.total_due;
             return `
             <tr>
-              <td>${index + 1}</td>
               <td><strong>${row.household_name}</strong></td>
               <td class="text-right">${formatCurrency(row.total_due)}</td>
               <td class="text-right money-positive">${formatCurrency(
@@ -317,9 +245,7 @@ export async function GET(request: NextRequest) {
     </table>
 
     <div class="footer">
-      <p>Dicetak pada ${formatDate(
-        new Date()
-      )} | E-Kencleng RT 7 - Sistem Pengelolaan Iuran Warga</p>
+      <p>Dicetak pada ${formatDate(new Date())} | E-Kencleng RT 7</p>
     </div>
   </div>
 

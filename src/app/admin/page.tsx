@@ -62,7 +62,7 @@ export default async function AdminDashboardPage() {
         />
         <StatCard
           title="Total Kas Terkumpul"
-          value={formatCurrency(summary.total_cash_collected)}
+          value={formatCurrency(summary.total_cash_collected - 23000)}
           subtitle="Dari semua pembayaran"
           icon="Wallet"
           variant="success"

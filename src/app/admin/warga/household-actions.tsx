@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus, Eye, Edit } from "lucide-react";
+import { Plus, Eye } from "lucide-react";
 
 export function AddHouseholdButton() {
   return (
@@ -20,7 +20,7 @@ export function EmptyHouseholdAction() {
     <Link href="/admin/warga/new">
       <Button className="bg-gradient-to-r from-emerald-500 to-teal-600">
         <Plus className="w-4 h-4 mr-2" />
-        Tambah Rumah Tangga
+        Tambah Warga Baru
       </Button>
     </Link>
   );
@@ -36,11 +36,7 @@ export function HouseholdActions({ householdId }: HouseholdActionsProps) {
       <Link href={`/admin/warga/${householdId}`}>
         <Button variant="ghost" size="sm">
           <Eye className="w-4 h-4" />
-        </Button>
-      </Link>
-      <Link href={`/admin/warga/${householdId}/edit`}>
-        <Button variant="ghost" size="sm">
-          <Edit className="w-4 h-4" />
+          Lihat
         </Button>
       </Link>
     </div>

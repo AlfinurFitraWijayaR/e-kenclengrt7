@@ -86,8 +86,8 @@ export function StatCard({
                     trend === "up"
                       ? "text-emerald-600"
                       : trend === "down"
-                      ? "text-red-600"
-                      : "text-slate-500"
+                        ? "text-red-600"
+                        : "text-slate-500"
                   }`}
                 >
                   {trend === "up" ? "↑" : trend === "down" ? "↓" : "→"}{" "}

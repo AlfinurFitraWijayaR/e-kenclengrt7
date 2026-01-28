@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, History, LogOut } from "lucide-react";
+import { Home, Users, LogOut } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
 
 const navItems = [
   { href: "/", label: "Home", icon: Home, exact: true },
   { href: "/warga", label: "Warga", icon: Users },
-  { href: "/history", label: "Riwayat", icon: History },
 ];
 
 interface NavLinkProps {

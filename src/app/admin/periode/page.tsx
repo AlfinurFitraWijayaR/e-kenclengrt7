@@ -13,11 +13,7 @@ import {
 import { getCollectionPeriods } from "@/lib/actions/periods";
 import { formatDate, getMonthName } from "@/lib/format";
 import { DeletePeriodButton } from "./delete-period-button";
-import {
-  AddPeriodButton,
-  EmptyPeriodAction,
-  PeriodActions,
-} from "./period-actions";
+import { AddPeriodButton, EmptyPeriodAction } from "./period-actions";
 
 export const metadata: Metadata = {
   title: "Periode Pengumpulan - E-Kencleng RT 7",
@@ -81,7 +77,6 @@ export default async function PeriodsPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <PeriodActions periodId={period.id} />
                         <DeletePeriodButton periodId={period.id} />
                       </div>
                     </TableCell>

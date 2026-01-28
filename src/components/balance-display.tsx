@@ -7,7 +7,7 @@ interface BalanceDisplayProps {
   balance: number;
   size?: "sm" | "md" | "lg";
   showBadge?: boolean;
-  light?: boolean; // For use on dark backgrounds
+  light?: boolean;
 }
 
 export function BalanceDisplay({
@@ -24,7 +24,6 @@ export function BalanceDisplay({
     lg: "text-2xl font-bold",
   };
 
-  // Use white/light colors when light prop is true
   const textColor = light
     ? "text-white"
     : status === "debt"
@@ -42,7 +41,7 @@ export function BalanceDisplay({
         : "secondary";
 
     return (
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex items-center justify-end gap-2 flex-wrap">
         <span className={`${textSizes[size]} ${textColor} font-mono`}>
           {label}
         </span>
@@ -50,7 +49,7 @@ export function BalanceDisplay({
           {status === "debt"
             ? "Hutang"
             : status === "deposit"
-            ? "Deposit"
+            ? "Nyimpen"
             : "Lunas"}
         </Badge>
       </div>

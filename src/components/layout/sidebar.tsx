@@ -7,7 +7,6 @@ import {
   Users,
   Calendar,
   History,
-  FileText,
   Menu,
   X,
   LogOut,
@@ -21,8 +20,7 @@ const navItems = [
   { href: "/admin", label: "Dashboard", icon: Home, exact: true },
   { href: "/admin/warga", label: "Daftar Warga", icon: Users },
   { href: "/admin/periode", label: "Periode", icon: Calendar },
-  { href: "/admin/history", label: "Riwayat Transaksi", icon: History },
-  { href: "/admin/export", label: "Ekspor PDF", icon: FileText },
+  { href: "/admin/history", label: "Riwayat Penarikan", icon: History },
 ];
 
 interface NavLinkProps {
@@ -58,12 +56,16 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-lg border border-slate-200"
-      >
-        <Menu size={24} className="text-slate-700" />
-      </button>
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+        <div className="h-12 flex items-center px-4">
+          <button
+            onClick={() => setIsMobileOpen(true)}
+            className="p-2 rounded-lg"
+          >
+            <Menu size={22} className="text-slate-700" />
+          </button>
+        </div>
+      </div>
 
       {/* Mobile Overlay */}
       {isMobileOpen && (
@@ -75,7 +77,7 @@ export function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 h-screen bg-white border-r border-slate-200 flex flex-col transition-transform duration-300 overflow-y-auto ${
           isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -88,11 +90,13 @@ export function Sidebar() {
             <X size={20} className="text-slate-500" />
           </button>
           <Link href="/admin" className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/25">
-              <Wallet className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/25">
+              <Wallet className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-900">E-Kencleng</h1>
+              <h1 className="text-lg font-bold text-slate-900">
+                E-Kencleng RT 7
+              </h1>
               <p className="text-xs text-slate-500">Admin Panel</p>
             </div>
           </Link>
@@ -134,9 +138,9 @@ export function Sidebar() {
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       <Sidebar />
-      <main className="flex-1 min-h-screen">
+      <main className="min-h-screen lg:ml-72">
         <div className="p-4 lg:p-8 pt-16 lg:pt-8">{children}</div>
       </main>
     </div>
